@@ -42,6 +42,11 @@ class SftpAdapter extends AbstractFtpAdapter
     protected $useAgent = false;
 
     /**
+     * @var int
+     */
+    protected $keepAlive = 0;
+
+    /**
      * @var Agent
      */
     private $agent;
@@ -49,7 +54,7 @@ class SftpAdapter extends AbstractFtpAdapter
     /**
      * @var array
      */
-    protected $configurable = ['host', 'hostFingerprint', 'port', 'username', 'password', 'useAgent', 'agent', 'timeout', 'root', 'privateKey', 'passphrase', 'permPrivate', 'permPublic', 'directoryPerm', 'NetSftpConnection'];
+    protected $configurable = ['host', 'hostFingerprint', 'port', 'username', 'password', 'useAgent', 'agent', 'timeout', 'keepAlive', 'root', 'privateKey', 'passphrase', 'permPrivate', 'permPublic', 'directoryPerm', 'NetSftpConnection'];
 
     /**
      * @var array
@@ -186,11 +191,26 @@ class SftpAdapter extends AbstractFtpAdapter
     }
 
     /**
+     * Set keepAlive
+     *
+     * @param int $keepAlive
+     *
+     * @return $this
+     */
+    public function setKeepAlive(int $keepAlive)
+    {
+        $this->keepAlive = $keepAlive;
+
+        return $this;
+    }
+
+    /**
      * Connect.
      */
     public function connect()
     {
         $this->connection = $this->connection ?: new SFTP($this->host, $this->port, $this->timeout);
+        if ($this->keepAlive) $this->connection->setKeepAlive($this->keepAlive);
         $this->connection->disableStatCache();
         $this->login();
         $this->setConnectionRoot();
