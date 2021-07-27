@@ -623,9 +623,7 @@ class SftpAdapter extends AbstractFtpAdapter
      */
     public function isConnected()
     {
-        $this->connection->ping();
-
-        if ($this->connection instanceof SFTP && $this->connection->isConnected()) {
+        if ($this->connection instanceof SFTP && $this->connection->ping()) {
             return true;
         }
 
